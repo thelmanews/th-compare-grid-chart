@@ -109,64 +109,64 @@
 		          label: 3
 		     };
 
+		    self.getComputedDims(self);
+
+	      var width = this.computedWidth-margin.left - margin.right, 
+	      		height = this.computedHeight - margin.top - margin.bottom;
+	         
+
+	      this.height = height;
+	      this.width = width;
+	   
+
+	      var chart_svg = this.$.chart;
+
+	      var totalCount = this.chartData.reduce(function(prev, cur) {
+	          return prev+= parseInt(cur.value);
+	      }, 0);
+
+	      var _data = {};
+
+	      var ratio = 1;
+
+	      if (totalCount < 20){
+	      	_data.elementsPerRow = Math.min(5, totalCount);
+	    	} else {
+	    		_data.elementsPerRow = Math.min(8, totalCount);
+	    	} 
+	      var rowNum = Math.ceil(totalCount / _data.elementsPerRow);
+	      
+	      _data.count = d3.range(0, totalCount);
+	      _data.dim = {
+	          width : Math.floor(width / _data.elementsPerRow),
+	          height : Math.floor(height / rowNum)
+	      };
 
 
-		      var width = this.chartWidth-margin.left - margin.right, 
-		      		height = this.chartHeight - margin.top - margin.bottom;
-		         
+	      this.data = _data;
+	      
 
-		      this.height = height;
-		      this.width = width;
-		   
+	      var svg, scale_bar, lefts, right, barg, left_holder, right_holder, right_labels;
 
-		      var chart_svg = this.$.chart;
+	      // var bar_width = 15, holder_height = 100, holder_width = width * 0.5;
+	      
 
-		      var totalCount = this.chartData.reduce(function(prev, cur) {
-		          return prev+= parseInt(cur.value);
-		      }, 0);
-
-		      var _data = {};
-
-		      var ratio = 1;
-
-		      if (totalCount < 20){
-		      	_data.elementsPerRow = Math.min(5, totalCount);
-		    	} else {
-		    		_data.elementsPerRow = Math.min(8, totalCount);
-		    	} 
-		      var rowNum = Math.ceil(totalCount / _data.elementsPerRow);
-		      
-		      _data.count = d3.range(0, totalCount);
-		      _data.dim = {
-		          width : Math.floor(width / _data.elementsPerRow),
-		          height : Math.floor(height / rowNum)
-		      };
+	      this.container = d3.select(chart_svg).attr('width', width + margin.left + margin.right)
+	          .attr('height', height+ margin.top + margin.bottom)
+	          .append('g');
 
 
-		      this.data = _data;
-		      
+	       this.icons = this.container.selectAll('.icon').data(_data.count).enter().append('image')
+	          .attr('xlink:href',function(d, i) { 
+	              return (i<self.chartData[0].value) ? self.chartData[0].image : self.chartData[1].image;
+	           })
+	          .attr('class', 'icon')
+	          .attr('width', function(d, i) {
+	              return (i<self.chartData[0].value) ? _data.dim.width : _data.dim.width+10; 
+	           })
+	          .attr('height', _data.dim.height);
 
-		      var svg, scale_bar, lefts, right, barg, left_holder, right_holder, right_labels;
-
-		      // var bar_width = 15, holder_height = 100, holder_width = width * 0.5;
-		      
-
-		      this.container = d3.select(chart_svg).attr('width', width + margin.left + margin.right)
-		          .attr('height', height+ margin.top + margin.bottom)
-		          .append('g');
-
-
-		       this.icons = this.container.selectAll('.icon').data(_data.count).enter().append('image')
-		          .attr('xlink:href',function(d, i) { 
-		              return (i<self.chartData[0].value) ? self.chartData[0].image : self.chartData[1].image;
-		           })
-		          .attr('class', 'icon')
-		          .attr('width', function(d, i) {
-		              return (i<self.chartData[0].value) ? _data.dim.width : _data.dim.width+10; 
-		           })
-		          .attr('height', _data.dim.height);
-
-		        this.icons.call(self._setInitialIconPos.bind(self));
+	        this.icons.call(self._setInitialIconPos.bind(self));
 
 
 
