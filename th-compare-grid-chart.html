@@ -1,7 +1,7 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../th-d3-chart/th-d3-chart.html">
 
-<polymer-element name="th-compare-grid-chart" extends="th-d3-chart" attributes="iconTransition animationDuration">
+<polymer-element name="th-compare-grid-chart" extends="th-d3-chart" attributes="iconTransition animationDuration imagesPerRow">
 
 	<template>
 	    <core-style ref="theme"></core-style>
@@ -40,8 +40,8 @@
 
 		Polymer('th-compare-grid-chart', {
 		  chartData: [
-		    {label: 'Non-Smoker', value: 21, image: 'images/kid.png'},
-		    {label: 'Smoker', value: 1, image: 'images/kid-smoker.png'}
+		    {label: 'Non-Smoker', value: 33, image: '../thelma-all/images/kid.png'},
+		    {label: 'Smoker', value: 1, image: '../thelma-all/images/kid-smoker.png'}
 		  ],
 		  /**
 		   * Transition type for images values: random or drop
@@ -54,6 +54,11 @@
 		   * @type {Number}
 		   */
 		  animationDuration: 100,
+		  /**
+		   * Number of images per row. When smaller than 1 component auto-computes that 
+		   * @type {Number}
+		   */
+		  imagesPerRow: 0,
 		  init: function() {
 		    
 		    var self = this;
@@ -82,11 +87,16 @@
 
 	      var ratio = 1;
 
-	      if (totalCount < 20){
-	      	_data.elementsPerRow = Math.min(5, totalCount);
-	    	} else {
+	      if(this.imagesPerRow>0) {
+	      	_data.elementsPerRow = this.imagesPerRow
+	      }
+	      else {
+		      if (totalCount < 20){
+		      	_data.elementsPerRow = Math.min(5, totalCount);
+		      } else {
 	    		_data.elementsPerRow = Math.min(8, totalCount);
-	    	} 
+	    	  } 
+    	  }
 	      var rowNum = Math.ceil(totalCount / _data.elementsPerRow);
 	      
 	      _data.count = d3.range(0, totalCount);
